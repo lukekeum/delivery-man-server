@@ -1,5 +1,6 @@
 import { getRepository } from 'typeorm';
 import User from '../entities/User';
+import UserProfile from '../entities/UserProfile';
 import Router from '../lib/router';
 
 interface IRegisterInput {
@@ -15,6 +16,7 @@ export const register: Router<void> = async (req, res) => {
   try {
     const errors: any = {};
     const userRepo = await getRepository(User);
+    const userProfileRepo = await getRepository(UserProfile);
 
     // Validate Data
     const emailUser = await userRepo.findOne({ email });
@@ -29,8 +31,13 @@ export const register: Router<void> = async (req, res) => {
     if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
 
     const user = new User({ email, username, phone_number, password });
+    const userProfile = new UserProfile({
+      display_name: username,
+      user_id: user.id,
+    });
 
     await userRepo.save(user);
+    await userProfileRepo.save(userProfile);
 
     // Return User
     return res.json(user);

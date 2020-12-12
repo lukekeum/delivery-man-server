@@ -12,6 +12,11 @@ import {
 
 @Entity('user_profiles')
 export default class UserProfile extends BaseEntity {
+  constructor(user: Partial<UserProfile>) {
+    super();
+    Object.assign(this, user);
+  }
+
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
