@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,8 +10,13 @@ import {
 } from 'typeorm';
 import UserProfile from './UserProfile';
 
-@Entity('user')
+@Entity('users')
 export default class User extends BaseEntity {
+  constructor(user: Partial<User>) {
+    super();
+    Object.assign(this, user);
+  }
+
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -34,4 +40,9 @@ export default class User extends BaseEntity {
 
   @UpdateDateColumn()
   update_at!: Date;
+
+  @BeforeInsert()
+  async hashPassword() {
+    // TODO: hash password with bcrypt
+  }
 }
