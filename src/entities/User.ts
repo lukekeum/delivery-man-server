@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import UserProfile from './UserProfile';
 import bcrypt from 'bcrypt';
+import { classToPlain, Exclude } from 'class-transformer';
 
 @Entity('users')
 export default class User extends BaseEntity {
@@ -30,6 +31,7 @@ export default class User extends BaseEntity {
   @Column({ unique: true, length: 255 })
   username!: string;
 
+  @Exclude()
   @Column()
   password!: string;
 
@@ -46,5 +48,9 @@ export default class User extends BaseEntity {
   async hashPassword() {
     // hash password with bcrypt
     this.password = await bcrypt.hash(this.password, 6);
+  }
+
+  toJSON() {
+    return classToPlain(this);
   }
 }

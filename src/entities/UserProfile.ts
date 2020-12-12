@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { classToPlain } from 'class-transformer';
 
 @Entity('user_profiles')
 export default class UserProfile extends BaseEntity {
@@ -35,4 +36,8 @@ export default class UserProfile extends BaseEntity {
 
   @UpdateDateColumn()
   update_at!: Date;
+
+  toJSON() {
+    return classToPlain(this);
+  }
 }
