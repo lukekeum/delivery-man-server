@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import UserProfile from './UserProfile';
+import bcrypt from 'bcrypt';
 
 @Entity('users')
 export default class User extends BaseEntity {
@@ -43,6 +44,7 @@ export default class User extends BaseEntity {
 
   @BeforeInsert()
   async hashPassword() {
-    // TODO: hash password with bcrypt
+    // hash password with bcrypt
+    this.password = await bcrypt.hash(this.password, 6);
   }
 }
