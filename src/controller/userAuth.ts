@@ -5,6 +5,7 @@ import Router from '../lib/router';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
+import { json } from 'body-parser';
 
 interface IRegisterInput {
   email: string;
@@ -99,5 +100,29 @@ export const login: Router<void> = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json(err);
+  }
+};
+
+export const me: Router<void> = async (req, res) => {
+  try {
+    const userRepo = await getRepository(User);
+
+    // Verify user's token
+    const token = req.cookies.token;
+    if (!token) throw new Error('Unauthenticated');
+
+    const { JWT_SECRET = 'JWT_SECRET' } = process.env;
+
+    const { username }: any = jwt.verify(token, JWT_SECRET);
+
+    const user = await userRepo.findOne({ username: username as string });
+
+    if (!user) throw new Error('Unauthenicated');
+
+    // Return user
+    return res.json({ user });
+  } catch (err) {
+    console.log(err);
+    return res.status(401).json({ error: err.message });
   }
 };
